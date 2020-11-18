@@ -1,4 +1,4 @@
-import styles from "./Title.module.css"
+import styles from "./Title.module.scss"
 
 export default function Title({ children }) {
     return (
