@@ -1,8 +1,9 @@
 import Head from 'next/head'
 import Title from '../components/title/Title'
 import Footer from "../components/footer/Footer"
+import Player from "../components/player/Player";
 
-export default function Players() {
+function Match({players}) {
     return (
         <div className="container">
             <Head>
@@ -14,15 +15,29 @@ export default function Players() {
                     UNO CALCULATOR
                 </Title>
                 <ul>
-                    <li>
-                        Jogador 1
-                    </li>
-                    <li>
-                        Jogador 2
-                    </li>
+                { players.map((player) => (
+                    <Player name={player.name} points={player.points}></Player>
+                ))}
                 </ul>
             </main>
             <Footer>Todos os direitos reservados</Footer>
         </div>
     )
 }
+
+
+export async function getStaticProps(context) {
+    const players = [
+      { name: "Julio", points: 0 },
+      { name: "Lili", points: 0 },
+      { name: "Marcelo", points: 0 },
+      { name: "Lilian", points: 0 }
+    ]
+    return {
+      props: {
+        players
+      },
+    }
+  }
+
+  export default Match;
