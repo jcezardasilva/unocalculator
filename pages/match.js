@@ -1,9 +1,10 @@
 import Head from 'next/head'
+import { connectToDatabase } from '../util/mongodb'
 import Title from '../components/title/Title'
 import Footer from "../components/footer/Footer"
 import Player from "../components/player/Player";
 
-function Match({players}) {
+export default function Match({ players }) {
     return (
         <div className="container">
             <Head>
@@ -15,9 +16,9 @@ function Match({players}) {
                     UNO CALCULATOR
                 </Title>
                 <ul>
-                { players.map((player) => (
-                    <Player name={player.name} points={player.points}></Player>
-                ))}
+                    {players.map((player) => (
+                        <Player name={player.name} points={player.points} key={player.name}></Player>
+                    ))}
                 </ul>
             </main>
             <Footer>Todos os direitos reservados</Footer>
@@ -25,19 +26,17 @@ function Match({players}) {
     )
 }
 
-
-export async function getStaticProps(context) {
-    const players = [
-      { name: "Julio", points: 0 },
-      { name: "Lili", points: 0 },
-      { name: "Marcelo", points: 0 },
-      { name: "Lilian", points: 0 }
-    ]
+export async function getServerSideProps(context) {
+    const { client, db } = await connectToDatabase();
+    const isConnected = await client.isConnected();
+    const players = await db
+        .collection("players")
+        .find({}, {name: 1, points: 1 , _id: 0})
+        .toArray();
     return {
-      props: {
-        players
-      },
+        props: {
+            isConnected,
+            players: JSON.parse(JSON.stringify(players))
+        },
     }
-  }
-
-  export default Match;
+}
